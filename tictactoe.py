@@ -1,3 +1,29 @@
+"""
+Simple Tic-Tac-Toe game playing AI.
+
+MIT License
+Copyright 2018 Bendik Samseth
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
+
 from collections import namedtuple
 
 CROSS  = 'X'
@@ -17,6 +43,7 @@ class Board(object):
         self.depth = 0
 
     def isDecided(self):
+        "Return the winning type ('X', 'O', ' ') or None if game not completed."
         # Check rows.
         for row in self.squares:
             if row == CROSSES_WIN: return CROSS
@@ -37,6 +64,7 @@ class Board(object):
         return None
 
     def moves(self):
+        "Generator for all possible moves."
         # Every non-occupied square is a move.
         for i, row in enumerate(self.squares):
             for j, square in enumerate(row):
@@ -44,6 +72,7 @@ class Board(object):
                     yield Move(i, j, self.turn)
 
     def doMove(self, move):
+        "Return a board where the suggested move has been made."
         # Make a copy board and change as needed.
         b = Board()
         b.squares = [row[:] for row in self.squares]
@@ -57,6 +86,7 @@ class Board(object):
 
 
 def search(board):
+    "Return a Winning(type, move) instance indicating the winning side and move to play."
     winner = board.isDecided()
     if winner:
         return Winning(winner, None)
@@ -82,6 +112,7 @@ def search(board):
 
 
 def play():
+    "Play against the AI in a simple text interface."
     import re
     board = Board()
     while True:
