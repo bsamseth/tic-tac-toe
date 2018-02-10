@@ -85,29 +85,23 @@ class Board(object):
         return '\n------\n'.join('|' + '|'.join(row) + '|' for row in self.squares) + '\n'
 
 
-def search(board):
+def search(board, lower = None, upper = None):
     "Return a Winning(type, move) instance indicating the winning side and move to play."
     winner = board.isDecided()
     if winner:
         return Winning(winner, None)
 
-    if board.turn == CROSS:
-        best = Winning(NOUGHT, None)
-        for move in board.moves():
-            v = search(board.doMove(move))
-            if v.type == CROSS:
-                return Winning(CROSS, move)
-            elif v.type == ' ':
-                best = Winning(' ', move)
-    else:
-        best = Winning(CROSS, None)
-        for move in board.moves():
-            v = search(board.doMove(move))
-
-            if v.type == NOUGHT:
-                return Winning(NOUGHT, move)
-            elif v.type == ' ':
-                best = Winning(' ', move)
+    us, them = board.turn, CROSS if board.turn == NOUGHT else NOUGHT
+    best = Winning(them, None)
+    for move in board.moves():
+        v = search(board.doMove(move), upper, lower)
+        if v.type == us:
+            return Winning(us, move)
+        elif v.type == ' ':
+            lower = ' '
+            best = Winning(' ', move)
+        if lower == upper:
+            return best
     return best
 
 
@@ -152,7 +146,7 @@ def play():
                 play()
             break
 
-        winning = search(board)
+        winning = search(board, CROSS, NOUGHT)
 
         print('My move: {}{}'.format(winning.move.row, winning.move.col))
         board = board.doMove(winning.move)
