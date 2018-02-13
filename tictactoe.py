@@ -151,13 +151,13 @@ def play():
         print(board)
 
         decided, _ = board.isOver()
-        if decided == NOUGHT:
+        if decided:
             print("You lost")
             if input("Play again? (y/n) ") == 'y':
                 play()
             break
 
-        # We query the user until she enters a (pseudo) legal move.
+        # We query the user until she enters a legal move.
         move = None
         while move not in board.moves():
             match = re.match('[1-9]', input('Your move: '))
