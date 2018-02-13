@@ -145,7 +145,7 @@ std::ostream& operator<<(std::ostream &strm, const Board &b) {
         else if ((b._squares[NOUGHT] & (1 << i))) strm << 'O';
         else strm << '-';
         if (i % 3 < 2) strm << '|';
-        else if (i < 8) strm << "\n------\n";
+        else if (i < 8) strm << "\n-----\n";
     }
     return strm;
 }

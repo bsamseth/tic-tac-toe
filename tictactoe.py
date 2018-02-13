@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 """
 Simple Tic-Tac-Toe game playing AI.
 
@@ -23,8 +26,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-
-from collections import namedtuple
 import math
 
 CROSS, NOUGHT  = 0, 1
@@ -100,7 +101,7 @@ class Board(object):
             elif self.squares[NOUGHT] & (1 << i): s += 'O'
             else: s += '-'
             if i % 3 < 2: s += '|'
-            elif i < 8: s += '\n------\n'
+            elif i < 8: s += '\n-----\n'
         return s
 
 
