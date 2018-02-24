@@ -28,15 +28,16 @@ SOFTWARE.
 
 import math
 
-CROSS, NOUGHT  = 0, 1
+CROSS, NOUGHT = 0, 1
 PLAYERS = [CROSS, NOUGHT]
 
 # Winning patterns encoded in bit patterns.
 # E.g. three in a row in the top row is
 #   448 = 0b111000000
-WINNING_PATTERNS = [ 448, 56, 7,   # Row
-                     292, 146, 73, # Columns
-                     273, 84 ]     # Diagonals
+WINNING_PATTERNS = [448, 56, 7,    # Row
+                    292, 146, 73,  # Columns
+                    273, 84]       # Diagonals
+
 
 class Board(object):
     """
@@ -54,58 +55,70 @@ class Board(object):
         X|O|X
     """
 
-    def __init__(self, squares = [0, 0], turn = CROSS, depth = 0):
-        self.squares = squares  # First is X-board, second O-board.
+    def __init__(self, squares=(0, 0), turn=CROSS, depth=0):
+        self.squares = list(squares)  # First is X-board, second O-board.
         self.turn = turn
         self.depth = depth
 
+    @property
     def score(self):
-        "Return +1 if self.turn has won, -1 for loss and 0 otherwise."
+        """Return +1 if self.turn has won, -1 for loss and 0 otherwise."""
         for player in PLAYERS:
             for pattern in WINNING_PATTERNS:
                 if (self.squares[player] & pattern) == pattern:
                     return 1 if player == self.turn else -1
         return 0
 
-    def isOver(self):
-        "Return (b, s) where b is True if the game is over, and s is the score."
-        score = self.score()
+    @property
+    def is_decided_and_score(self):
+        """Return (b, s) where b is True if the game is over, and s is the score."""
+        score = self.score
         return bool(score) or self.depth == 9, score
 
-    def nextPlayer(self):
+    @property
+    def is_decided(self):
+        """Return True if the game is over."""
+        return self.depth == 9 or bool(self.score)
+
+    def next_player(self):
         return CROSS if self.turn == NOUGHT else NOUGHT
 
     def moves(self):
-        "Generator for all possible moves."
+        """Generator for all possible moves."""
         # Every non-occupied square is a move.
         taken = self.squares[CROSS] | self.squares[NOUGHT]
         square = 256  # Bottom right corner.
         while square:
-            if not(taken & square):
+            if not (taken & square):
                 yield square
             square = square >> 1
 
-    def doMove(self, move):
-        "Return a board where the suggested move has been made."
-        b = Board(squares = self.squares[:],  # Copy squares.
-                  turn = self.nextPlayer(),   # Swap player to move.
-                  depth = self.depth + 1)     # Increment depth.
-        b.squares[self.turn] |= move          # Apply move.
+    def do_move(self, move):
+        """Return a board where the suggested move has been made."""
+        b = Board(squares=self.squares[:],  # Copy squares.
+                  turn=self.next_player(),  # Swap player to move.
+                  depth=self.depth + 1)     # Increment depth.
+        b.squares[self.turn] |= move        # Apply move.
         return b
 
-    def __str__(self):
-        "Return string representation of the board."
+    def __repr__(self):
+        """Return string representation of the board."""
         s = ''
         for i in range(9):
-            if self.squares[CROSS] & (1 << i): s += 'X'
-            elif self.squares[NOUGHT] & (1 << i): s += 'O'
-            else: s += '-'
-            if i % 3 < 2: s += '|'
-            elif i < 8: s += '\n-----\n'
+            if self.squares[CROSS] & (1 << i):
+                s += 'X'
+            elif self.squares[NOUGHT] & (1 << i):
+                s += 'O'
+            else:
+                s += '-'
+            if i % 3 < 2:
+                s += '|'
+            elif i < 8:
+                s += '\n-----\n'
         return s
 
 
-def search(board, lower = -1, upper = 1):
+def search(board, lower=-1, upper=1):
     """
     Return score and best move, relative to board.turn.
 
@@ -114,7 +127,7 @@ def search(board, lower = -1, upper = 1):
     """
 
     # If game is over we know the score.
-    decided, score = board.isOver()
+    decided, score = board.is_decided_and_score
     if decided:
         return score, None
 
@@ -125,7 +138,7 @@ def search(board, lower = -1, upper = 1):
     for move in board.moves():
 
         # v is score of position after the move.
-        v = - search(board.doMove(move), -upper, -lower)[0]
+        v = - search(board.do_move(move), -upper, -lower)[0]
 
         # New best move?
         if v > bestScore:
@@ -151,7 +164,7 @@ def play():
         print()
         print(board)
 
-        decided, _ = board.isOver()
+        decided, _ = board.is_decided_and_score
         if decided:
             print("You lost")
             if input("Play again? (y/n) ") == 'y':
@@ -163,16 +176,16 @@ def play():
         while move not in board.moves():
             match = re.match('[1-9]', input('Your move: '))
             if match:
-                move = 2**(int(match.string[0]) - 1)
+                move = 2 ** (int(match.string[0]) - 1)
             else:
                 # Inform the user when invalid input (e.g. "help") is entered
                 print("Please enter a move like 3 for top right.")
-        board = board.doMove(move)
+        board = board.do_move(move)
 
         print()
         print(board)
 
-        decided, score = board.isOver()
+        decided, score = board.is_decided_and_score
         if decided and score == 0:
             print("It's a draw")
             if input("Play again? (y/n) ") == 'y':
@@ -182,9 +195,8 @@ def play():
         score, move = search(board)
 
         print('My move: {}'.format(round(math.log2(move) + 1)))
-        board = board.doMove(move)
+        board = board.do_move(move)
 
 
 if __name__ == "__main__":
     play()
-
