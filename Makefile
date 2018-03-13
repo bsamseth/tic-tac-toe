@@ -1,10 +1,21 @@
 CXX=g++
 CXX_FLAGS=-std=c++11 -O3
+JAVAC=javac
+JAVA=java
 
-run: tictactoe.x
-	./tictactoe.x
+all: tictactoe.x Play.class
+
+run-cpp: tictactoe.x
+	@./tictactoe.x
+
+run-java: Play.class
+	@$(JAVA) Play
+
 tictactoe.x: tictactoe.cpp
-	$(CXX) $(CXX_FLAGS) $^ -o $@
+	@$(CXX) $(CXX_FLAGS) $^ -o $@
+
+Play.class: tictactoe.java
+	@$(JAVAC) $^
 
 clean:
-	rm *.x
+	@rm -f *.x *.class
