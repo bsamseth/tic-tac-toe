@@ -34,9 +34,11 @@ PLAYERS = [CROSS, NOUGHT]
 # Winning patterns encoded in bit patterns.
 # E.g. three in a row in the top row is
 #   448 = 0b111000000
-WINNING_PATTERNS = [448, 56, 7,    # Row
-                    292, 146, 73,  # Columns
-                    273, 84]       # Diagonals
+WINNING_PATTERNS = [
+        448, 56, 7,   # Rows
+        292, 146, 73, # Columns
+        273, 84       # Diagonals
+]
 
 
 class Board(object):
@@ -80,6 +82,7 @@ class Board(object):
         """Return True if the game is over."""
         return self.depth == 9 or bool(self.score)
 
+    @property
     def next_player(self):
         return CROSS if self.turn == NOUGHT else NOUGHT
 
@@ -95,26 +98,28 @@ class Board(object):
 
     def do_move(self, move):
         """Return a board where the suggested move has been made."""
-        b = Board(squares=self.squares[:],  # Copy squares.
-                  turn=self.next_player(),  # Swap player to move.
-                  depth=self.depth + 1)     # Increment depth.
-        b.squares[self.turn] |= move        # Apply move.
+        b = Board(
+            squares=self.squares[:],  # Copy squares.
+            turn=self.next_player,    # Swap player to move.
+            depth=self.depth + 1,     # Increment depth.
+        )
+        b.squares[self.turn] |= move  # Apply move.
         return b
 
     def __repr__(self):
         """Return string representation of the board."""
-        s = ''
+        s = ""
         for i in range(9):
             if self.squares[CROSS] & (1 << i):
-                s += 'X'
+                s += "X"
             elif self.squares[NOUGHT] & (1 << i):
-                s += 'O'
+                s += "O"
             else:
-                s += '-'
+                s += "-"
             if i % 3 < 2:
-                s += '|'
+                s += "|"
             elif i < 8:
-                s += '\n-----\n'
+                s += "\n-----\n"
         return s
 
 
@@ -133,12 +138,12 @@ def search(board, lower=-1, upper=1):
 
     # Recursively explore the available moves, keeping
     # track of the best score and move to play.
-    bestScore, bestMove = -float('inf'), None
+    bestScore, bestMove = -float("inf"), None
 
     for move in board.moves():
 
         # v is score of position after the move.
-        v = - search(board.do_move(move), -upper, -lower)[0]
+        v = -search(board.do_move(move), -upper, -lower)[0]
 
         # New best move?
         if v > bestScore:
@@ -155,48 +160,3 @@ def search(board, lower=-1, upper=1):
 
     return bestScore, bestMove
 
-
-def play():
-    "Play against the AI in a simple text interface."
-    import re
-    board = Board()
-    while True:
-        print()
-        print(board)
-
-        decided, _ = board.is_decided_and_score
-        if decided:
-            print("You lost")
-            if input("Play again? (y/n) ") == 'y':
-                play()
-            break
-
-        # We query the user until she enters a legal move.
-        move = None
-        while move not in board.moves():
-            match = re.match('[1-9]', input('Your move: '))
-            if match:
-                move = 2 ** (int(match.string[0]) - 1)
-            else:
-                # Inform the user when invalid input (e.g. "help") is entered
-                print("Please enter a move like 3 for top right.")
-        board = board.do_move(move)
-
-        print()
-        print(board)
-
-        decided, score = board.is_decided_and_score
-        if decided and score == 0:
-            print("It's a draw")
-            if input("Play again? (y/n) ") == 'y':
-                play()
-            break
-
-        score, move = search(board)
-
-        print('My move: {}'.format(round(math.log2(move) + 1)))
-        board = board.do_move(move)
-
-
-if __name__ == "__main__":
-    play()
