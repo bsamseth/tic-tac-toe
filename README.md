@@ -8,33 +8,53 @@ however, as the AI never plays a move allowing you to do so.
 This project was made as a simple demo of game playing computer programs,
 illustrating an implementation of the [minimax algorithm](https://en.wikipedia.org/wiki/Minimax).
 
+In addition, an implementation of [Monte Carlo Tree Search](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search)
+can be found in [mcts.py](mcts.py), showcasing a quite different approach.
 
 ## Run (Python)
-To play against the [Python version](tictactoe.py) of the AI, simply run the program in a terminal:
+To play against the [Python version](tictactoe.py) of the AI, simply run the
+program in a terminal. The script allows you to chose the players, and you can
+even have different AIs play each other.
 
+Below is a short demo:
 ```
-> python3 tictactoe.py
+> python3 play.py
+Who is player 1?
+	 (1) You (human)
+	 (2) MiniMax (AI)
+	 (3) MCTS with random rollout (AI)
+	 (3) MCTS with perfect rollout (AI)
+
+Enter choice: 1
+
+Who is player 2?
+	 (1) You (human)
+	 (2) MiniMax (AI)
+	 (3) MCTS with random rollout (AI)
+	 (3) MCTS with perfect rollout (AI)
+
+Enter choice: 2
 
 -|-|-
 -----
 -|-|-
 -----
 -|-|-
-Your move: 5
 
+Enter move (1-9): 5
 -|-|-
 -----
 -|X|-
 -----
 -|-|-
-My move: 9
 
 -|-|-
 -----
 -|X|-
 -----
 -|-|O
-Your move:
+
+Enter move (1-9):
 ```
 
 ## Run (C++)
