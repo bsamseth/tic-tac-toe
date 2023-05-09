@@ -1,7 +1,7 @@
 # Tic-Tac-Toe AI
 
 This is a simple little game playing "AI" that can play Tic-Tac-Toe (Noughts
-and crosses). There are several versions, written in Python, Java and C++. You
+and crosses). There are several versions, written in Python, Rust, Java and C++. You
 may play against either in a simple command line interface. You will never win,
 however, as the AI never plays a move allowing you to do so.
 
@@ -57,12 +57,31 @@ Enter move (1-9): 5
 Enter move (1-9):
 ```
 
+## Run (Rust)
+To play against the [Rust version](tictactoe.rs) of the AI, you can use the provided [Makefile](Makefile):
+```
+> make run-rust
+Best move found in an average of 0.28ms
+
+---+---+---
+   |   |
+---+---+---
+   |   |
+---+---+---
+   |   |
+---+---+---
+
+Enter move [0, 9):
+```
+
 ## Run (C++)
-To play against the [C++ version](tictactoe.cpp) of the AI, you can use the provided [Makefile](Makefile):
+To play against the [C++ version](tictactoe.cpp) of the AI, you can use the provided [Makefile](Makefile). This
+implementation uses a [Bitboard](https://en.wikipedia.org/wiki/Bitboard) representation of the game, for variety. In
+the case of Tic-Tac-Toe, it's slower than a simple array, but in games like chess they are essential.
 ``` 
 > make run-cpp
 Guaranteed outcome with optimal play (1 = Cross, -1 = nought, 0 = draw): 0
-Found in average time out of 100 times: 3.12 ms
+Found in average time out of 100 times: 0.90 ms 
 Don't trust the AI's determination? Go ahead, try to beat it. You can even go first.
 
 -|-|-
@@ -77,7 +96,7 @@ Your move:
 To play against the [Java version](tictactoe.java) of the AI, you can also use the provided [Makefile](Makefile):
 ```
 > make run-java
-Found best move in 2.44 ms on average of 100 times.
+Found best move in 1.00 ms on average of 100 times.
 
 -|-|-
 -|-|-
